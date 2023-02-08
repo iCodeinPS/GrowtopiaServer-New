@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Headers\Players">
+      <UniqueIdentifier>{35bf248c-491d-41a2-b631-eb41a970d247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Headers\Worlds">
+      <UniqueIdentifier>{6c9902b1-b446-4865-9034-c2fc4387a515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Headers\GamePacket">
+      <UniqueIdentifier>{29c441df-4a29-4e4e-8003-f928ea0ebd11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Headers\BackEnd">
+      <UniqueIdentifier>{eef7e8f1-9ae4-49e4-a795-488b370fb0fb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Source Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\GamePacket\game_packet.h">
+      <Filter>Source Headers\GamePacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\BackEnd\back_end.h">
+      <Filter>Source Headers\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\World\world_action.h">
+      <Filter>Source Headers\Worlds</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\World\world_base.h">
+      <Filter>Source Headers\Worlds</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\Player\player_action.h">
+      <Filter>Source Headers\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Headers\Player\player_base.h">
+      <Filter>Source Headers\Players</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
