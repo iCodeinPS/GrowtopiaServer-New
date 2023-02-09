@@ -1,3 +1,6 @@
+# Discord
+https://discord.gg/VScVSgJXnr
+
 # What is This
 This is GrowtopiaServer v1 by GrowtopiaNoobs, ReSeperated to make it more readable.
 Made for better growtopia server programming, and less confusion
