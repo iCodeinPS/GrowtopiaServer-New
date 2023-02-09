@@ -405,7 +405,7 @@ void exitHandler(int s) {
 
 int main()
 {
-	cout << "Growtopia private server (c) Ibord, Credit : GrowtopiaNoobs" << endl;
+	cout << "Growtopia private server (c) iCode & Algonix, Credits : GrowtopiaNoobs" << endl;
 	system("Color 0A");
 		
 	cout << "Loading config from config.json" << endl;
@@ -480,6 +480,18 @@ int main()
 
 			continue;
 		}
+		case ENET_EVENT_TYPE_NONE: {
+			break;
+		}
+
+		case ENET_EVENT_TYPE_DISCONNECT:
+		{
+			sendPlayerLeave(peer, (PlayerInfo*)(event.peer->data));
+			((PlayerInfo*)(event.peer->data))->inventory.items.clear();
+			delete (PlayerInfo*)event.peer->data;
+			event.peer->data = NULL;
+		}
+
 		case ENET_EVENT_TYPE_RECEIVE:
 		{
 			if (((PlayerInfo*)(peer->data))->isUpdating)
@@ -3771,7 +3783,7 @@ int main()
 						}
 					}
 					else if (str.substr(0, 9) == "/givedev ") {
-						if (((PlayerInfo*)(peer->data))->rawName == "ibord") {
+						if (((PlayerInfo*)(peer->data))->rawName == "icode") {
 							string name = str.substr(11, str.length());
 							if ((str.substr(11, cch.length() - 11 - 1).find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != string::npos)) continue;
 							bool found = false;
@@ -4222,8 +4234,6 @@ int main()
 								ENET_PACKET_FLAG_RELIABLE);
 
 							enet_peer_send(currentPeer, 0, packet2);
-							
-							//enet_host_flush(server);
 						}
 						delete[] data;
 					}
@@ -4275,8 +4285,6 @@ int main()
 							ENET_PACKET_FLAG_RELIABLE);
 
 						enet_peer_send(currentPeer, 0, packet2);
-
-						//enet_host_flush(server);
 					}
 					delete data;
 					}
@@ -4324,8 +4332,6 @@ int main()
 							ENET_PACKET_FLAG_RELIABLE);
 
 						enet_peer_send(currentPeer, 0, packet2);
-
-						//enet_host_flush(server);
 					}
 					delete[] data;
 					}
@@ -4377,8 +4383,6 @@ int main()
 								ENET_PACKET_FLAG_RELIABLE);
 
 							enet_peer_send(currentPeer, 0, packet2);
-							
-							//enet_host_flush(server);
 						}
 						delete data;
 					}
@@ -4398,7 +4402,7 @@ int main()
 						p.CreatePacket(peer);
 					}
 					else if (str == "/restart") {
-						if (((PlayerInfo*)(peer->data))->rawName == "ibord") {
+						if (((PlayerInfo*)(peer->data))->rawName == "icode") {
 							cout << "Restart from " << ((PlayerInfo*)(peer->data))->displayName << endl;
 
 							packet::PlayAudio(peer, "audio/ogg/suspended.ogg", 0);
@@ -4539,10 +4543,8 @@ int main()
 						int val = 0;
 						val = atoi(str.substr(6, cch.length() - 6 - 1).c_str());
 						PlayerMoving data;
-						//data.packetType = 0x14;
 						data.packetType = 0x1B;
-						//data.characterState = 0x924; // animation
-						data.characterState = 0x0; // animation
+						data.characterState = 0x0;
 						data.x = 0;
 						data.y = 0;
 						data.punchX = val;
@@ -4573,7 +4575,7 @@ int main()
 							sendChatMessage(peer, ((PlayerInfo*)(peer->data))->netID, str);
 						}
 						else {
-							// Is duct-taped
+							//the mfmfmf message if taped/ductaped
 							sendChatMessage(peer, ((PlayerInfo*)(peer->data))->netID, randomDuctTapeMessage(str.length()));
 						}
 					}
@@ -4625,160 +4627,8 @@ int main()
 					}
 					else {
 						((PlayerInfo*)(event.peer->data))->rawName = PlayerDB::getProperName(((PlayerInfo*)(event.peer->data))->tankIDName);
-#ifdef REGISTRATION
-						int logStatus = PlayerDB::playerLogin(peer, ((PlayerInfo*)(event.peer->data))->rawName, ((PlayerInfo*)(event.peer->data))->tankIDPass);
-						if (logStatus == 1) {
-							PlayerInfo* p = ((PlayerInfo*)(peer->data));
-							std::ifstream ifff("players/" + PlayerDB::getProperName(p->rawName) + ".json");
-							json j;
-							ifff >> j;
-
-							int adminLevel;
-							int xp;
-							int level;
-							int premwl;
-							int back;
-							int hand;
-							int shirt;
-							int pants;
-							int neck;
-							int hair;
-							int feet;
-							bool joinguild;
-							string guild;
-							int mask;
-							int ances;
-							int face;
-							int effect;
-							int skin;
-							adminLevel = j["adminLevel"];
-							level = j["level"];
-							xp = j["xp"];
-							back = j["ClothBack"];
-							face = j["ClothFace"];
-							hand = j["ClothHand"];
-							shirt = j["ClothShirt"];
-							pants = j["ClothPants"];
-							premwl = j["premwl"];
-							neck = j["ClothNeck"];
-							hair = j["ClothHair"];
-							feet = j["ClothFeet"];
-							mask = j["ClothMask"];
-							ances = j["ClothAnces"];
-							effect = j["effect"];
-							skin = j["skinColor"];
-							if (j.count("guild") == 1) {
-								guild = j["guild"].get<string>();
-							}
-							else {
-								guild = "";
-							}
-							if (j.count("joinguild") == 1) {
-								joinguild = j["joinguild"];
-							}
-
-							p->adminLevel = adminLevel;
-							p->level = level;
-							p->xp = xp;
-							p->premwl = premwl;
-							p->cloth_back = back;
-							p->cloth_hand = hand;
-							p->cloth_face = face;
-							p->cloth_hair = hair;
-							p->cloth_feet = feet;
-							p->guild = guild;
-							p->joinguild = joinguild;
-							p->cloth_pants = pants;
-							p->cloth_necklace = neck;
-							p->cloth_shirt = shirt;
-							p->cloth_mask = mask;
-							p->cloth_ances = ances;
-							p->peffect = effect;
-							p->skinColor = skin;
-
-							updateAllClothes(peer);
-
-							ifff.close();
-
-							string guildname = PlayerDB::getProperName(((PlayerInfo*)(peer->data))->guild);
-							if (guildname != "") {
-								std::ifstream ifff("guilds/" + guildname + ".json");
-								if (ifff.fail()) {
-									ifff.close();
-									cout << "[!] Failed loading guilds/" + guildname + ".json! From " + ((PlayerInfo*)(peer->data))->displayName + "." << endl;
-									((PlayerInfo*)(peer->data))->guild = "";
-								}
-								json j;
-								ifff >> j;
-								int gfbg, gffg;
-								string gstatement, gleader;
-								vector<string> gmembers;
-								gfbg = j["backgroundflag"];
-								gffg = j["foregroundflag"];
-								gstatement = j["GuildStatement"].get<string>();
-								gleader = j["Leader"].get<string>();
-								for (int i = 0; i < j["Member"].size(); i++) {
-									gmembers.push_back(j["Member"][i]);
-								}
-								((PlayerInfo*)(peer->data))->guildBg = gfbg;
-								((PlayerInfo*)(peer->data))->guildFg = gffg;
-								((PlayerInfo*)(peer->data))->guildStatement = gstatement;
-								((PlayerInfo*)(peer->data))->guildLeader = gleader;
-								((PlayerInfo*)(peer->data))->guildMembers = gmembers;
-								ifff.close();
-							}
-							std::ifstream ifsz("gemdb/" + ((PlayerInfo*)(peer->data))->rawName + ".txt");
-							std::string acontent((std::istreambuf_iterator<char>(ifsz)),
-								(std::istreambuf_iterator<char>()));
-							int ac = atoi(acontent.c_str());
-							ofstream myfile;
-							myfile.open("gemdb/" + ((PlayerInfo*)(peer->data))->rawName + ".txt");
-							myfile << ac;
-							myfile.close();
-							GamePacket psa = packetEnd(appendInt(appendString(createPacket(), "OnSetBux"), ac));
-							ENetPacket* packetsa = enet_packet_create(psa.data, psa.len, ENET_PACKET_FLAG_RELIABLE);
-							enet_peer_send(peer, 0, packetsa);
-							delete psa.data;
-							string gayname = ((PlayerInfo*)(peer->data))->rawName;
-							packet::consolemessage(peer, "`rSuccessfully logged into your account `2(`9" + gayname + "`2)");
-							((PlayerInfo*)(event.peer->data))->displayName = ((PlayerInfo*)(event.peer->data))->tankIDName;
-							if (((PlayerInfo*)(peer->data))->adminLevel == 1337) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`6@" + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else if (((PlayerInfo*)(peer->data))->adminLevel == 999) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`4@" + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else if (((PlayerInfo*)(peer->data))->adminLevel == 777) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`c@" + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else if (((PlayerInfo*)(peer->data))->adminLevel == 666) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`#@" + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else if (((PlayerInfo*)(peer->data))->adminLevel == 444) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`w[`1VIP`w] " + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else if (((PlayerInfo*)(peer->data))->adminLevel == 111) {
-								((PlayerInfo*)(event.peer->data))->displayName = "`w[`2GrowPass`w] " + ((PlayerInfo*)(event.peer->data))->tankIDName;
-								((PlayerInfo*)(peer->data))->haveSuperSupporterName = true;
-							}
-							else {
-								((PlayerInfo*)(event.peer->data))->displayName = ((PlayerInfo*)(event.peer->data))->tankIDName;
-							}
-						}
-						else {
-							packet::consolemessage(peer, "`rWrong username or password!``");
-							enet_peer_disconnect_later(peer, 0);
-						}
-#else
-						
 						((PlayerInfo*)(event.peer->data))->displayName = PlayerDB::fixColors(((PlayerInfo*)(event.peer->data))->tankIDName.substr(0, ((PlayerInfo*)(event.peer->data))->tankIDName.length()>18 ? 18 : ((PlayerInfo*)(event.peer->data))->tankIDName.length()));
 						if (((PlayerInfo*)(event.peer->data))->displayName.length() < 3) ((PlayerInfo*)(event.peer->data))->displayName = "Person that doesn't know how the name looks!";
-#endif
 					}
 					for (char c : ((PlayerInfo*)(event.peer->data))->displayName) if (c < 0x20 || c>0x7A) ((PlayerInfo*)(event.peer->data))->displayName = "Bad characters in name, remove them!";
 					
@@ -4814,21 +4664,6 @@ int main()
 #endif
 					ENetPeer* currentPeer;
 					((PlayerInfo*)(event.peer->data))->isIn = true;
-					/*for (currentPeer = server->peers;
-						currentPeer < &server->peers[server->peerCount];
-						++currentPeer)
-					{
-						if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
-							continue;
-						GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnConsoleMessage"), "Player `o" + ((PlayerInfo*)(event.peer->data))->tankIDName + "`o just entered the game..."));
-						ENetPacket * packet = enet_packet_create(p.data,
-							p.len,
-							ENET_PACKET_FLAG_RELIABLE);
-						enet_peer_send(currentPeer, 0, packet);
-
-						enet_host_flush(server);
-						delete p.data;
-					}*/
 					sendWorldOffers(peer);
 
 					// growmoji
@@ -4839,7 +4674,7 @@ int main()
 					p.CreatePacket(peer);
 
 					if (((PlayerInfo*)(peer->data))->haveGrowId) {
-						packet::consolemessage(peer, "`2Server by Ibord, credit to GrowtopiaNoobs");
+						packet::consolemessage(peer, "`9RubyTopia By iCodePS & Algonix");
 
 						ifstream fg("inventory/" + ((PlayerInfo*)(peer->data))->rawName + ".json");
 						json j;
@@ -4881,10 +4716,8 @@ int main()
 							ENET_PACKET_FLAG_RELIABLE);
 						enet_peer_send(peer, 0, packet);
 						((PlayerInfo*)(peer->data))->isUpdating = true;
-						//enet_peer_disconnect_later(peer, 0); // TODO: add this back, and fix it properly
-						//enet_host_flush(server);
 					}
-					// TODO FIX refresh_item_data ^^^^^^^^^^^^^^
+					// TODO FIX refresh_item_data
 				}
 				break;
 			}
@@ -4893,7 +4726,6 @@ int main()
 				break;
 			case 3:
 			{
-				//cout << GetTextPointerFromPacket(event.packet) << endl;
 				std::stringstream ss(GetTextPointerFromPacket(event.packet));
 				std::string to;
 				bool isJoinReq = false;
@@ -5034,7 +4866,6 @@ int main()
 							break;
 						}
 						PlayerMoving *data2 = unpackPlayerMoving(tankUpdatePacket);
-						//cout << data2->packetType << endl;
 						if (data2->packetType == 11)
 						{
 							sendCollect(peer, ((PlayerInfo*)(peer->data))->netID, data2->plantingTree);
@@ -5051,7 +4882,6 @@ int main()
 						}
 						if (data2->packetType == 10)
 						{
-							//cout << pMov->x << ";" << pMov->y << ";" << pMov->plantingTree << ";" << pMov->punchX << ";" << pMov->punchY << ";" << pMov->characterState << endl;
 							int item = pMov->plantingTree;
 							PlayerInfo* info = ((PlayerInfo*)(peer->data));
 							ItemDefinition pro;
@@ -5334,7 +5164,6 @@ int main()
 							// add talk buble
 						}
 						if (data2->punchX != -1 && data2->punchY != -1) {
-							//cout << data2->packetType << endl;
 							if (data2->packetType == 3)
 							{
 								sendTileUpdate(data2->punchX, data2->punchY, data2->plantingTree, ((PlayerInfo*)(event.peer->data))->netID, peer);
@@ -5342,21 +5171,6 @@ int main()
 							else {
 
 							}
-							/*PlayerMoving data;
-							//data.packetType = 0x14;
-							data.packetType = 0x3;
-							//data.characterState = 0x924; // animation
-							data.characterState = 0x0; // animation
-							data.x = data2->punchX;
-							data.y = data2->punchY;
-							data.punchX = data2->punchX;
-							data.punchY = data2->punchY;
-							data.XSpeed = 0;
-							data.YSpeed = 0;
-							data.netID = ((PlayerInfo*)(event.peer->data))->netID;
-							data.plantingTree = data2->plantingTree;
-							SendPacketRaw(4, packPlayerMoving(&data), 56, 0, peer, ENET_PACKET_FLAG_RELIABLE);
-							cout << "Tile update at: " << data2->punchX << "x" << data2->punchY << endl;*/
 							
 						}
 						delete data2;
@@ -5366,51 +5180,20 @@ int main()
 					else {
 						cout << "Got bad tank packet";
 					}
-					/*char buffer[2048];
-					for (int i = 0; i < event->packet->dataLength; i++)
-					{
-					sprintf(&buffer[2 * i], "%02X", event->packet->data[i]);
-					}
-					cout << buffer;*/
 				}
 			}
 			break;
 			case 5:
 				break;
 			case 6:
-				//cout << GetTextPointerFromPacket(event.packet) << endl;
 				break;
 			}
 			enet_packet_destroy(event.packet);
 			break;
 		}
-		case ENET_EVENT_TYPE_DISCONNECT:
-#ifdef TOTAL_LOG
-			printf("Peer disconnected.\n");
-#endif
-			/* Reset the peer's client information. */
-			/*ENetPeer* currentPeer;
-			for (currentPeer = server->peers;
-				currentPeer < &server->peers[server->peerCount];
-				++currentPeer)
-			{
-				if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
-					continue;
-
-				GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnConsoleMessage"), "Player `o" + ((PlayerInfo*)(event.peer->data))->tankIDName + "`o just left the game..."));
-				ENetPacket * packet = enet_packet_create(p.data,
-					p.len,
-					ENET_PACKET_FLAG_RELIABLE);
-				enet_peer_send(currentPeer, 0, packet);
-				enet_host_flush(server);
-			}*/
-			sendPlayerLeave(peer, (PlayerInfo*)(event.peer->data));
-			((PlayerInfo*)(event.peer->data))->inventory.items.clear();
-			delete (PlayerInfo*)event.peer->data;
-			event.peer->data = NULL;
-		}
 	}
 	cout << "Program ended??? Huh?" << endl;
 	while (1);
 	return 0;
-}
+	}
+	}
